@@ -1,0 +1,35 @@
+version: '3.3'
+services:
+  db:
+    image: postgres
+    container_name: postgres-container
+    expose:
+      - "5432"
+    restart: always
+    networks:
+      - mynetworks
+    environment:
+      - POSTGRES_PASSWORD=mysecretpassword
+  api:
+    image: node:8
+    container_name: node-container
+    restart: always
+    user: node
+    working_dir: /home/node/app
+    environment:
+      - NODE_ENV=production
+    networks:
+      - mynetworks
+    volumes:
+      - ./:/home/node/app
+    expose:
+      - "3000"
+    ports:
+      - 3000:3000
+    command: "npm install"
+    command: "npm start"
+    depends_on:
+      - db
+networks:
+  mynetworks:
+    driver: bridge
